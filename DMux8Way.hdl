@@ -1,0 +1,51 @@
+/**
+ * 8-way demultiplexor:
+ * {a, b, c, d, e, f, g, h} = {in, 0, 0, 0, 0, 0, 0, 0} if sel == 000
+ *                            {0, in, 0, 0, 0, 0, 0, 0} if sel == 001
+ *                            etc.
+ *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
+ */
+
+CHIP DMux8Way {
+    IN in, sel[3];
+    OUT a, b, c, d, e, f, g, h;
+
+    PARTS:
+    // Put your code here:
+
+    Not(in=sel[0], out=notSel0);
+    Not(in=sel[1], out=notSel1);
+    Not(in=sel[2], out=notSel2);
+
+    And(a=in, b=notSel0, out=notSel0in);
+    And(a=notSel1, b=notSel2, out=notSel12);
+    And(a=notSel1, b=sel[2], out=sel2notSel1);
+    And(a=sel[1], b=notSel2, out=sel1notSel2);
+    And(a=in, b=sel[0], out=sel0in);
+    And(a=sel[1], b=sel[2], out=sel12);
+
+    //A
+    And(a=notSel0in, b=notSel12, out=a);
+
+    //B
+    And(a=notSel12, b=sel0in, out=b);
+
+    //C
+    And(a=notSel0in, b=sel1notSel2, out=c);
+
+    //D
+    And(a=sel1notSel2, b=sel0in, out=d);
+
+    //E
+    And(a=notSel0in, b=sel2notSel1, out=e);
+
+    //F
+    And(a=sel0in, b=sel2notSel1, out=f);
+
+    //G
+    And(a=notSel0in, b=sel12, out=g);
+
+    //H
+    And(a=sel0in, b=sel12, out=h);
+
+}
